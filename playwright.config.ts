@@ -1,4 +1,9 @@
+import { existsSync } from "node:fs";
+
 import { defineConfig, devices } from "@playwright/test";
+
+// Claves locales de Supabase para crear usuarios de prueba (nunca claves de producción).
+if (existsSync(".env.local")) process.loadEnvFile(".env.local");
 
 /**
  * E2E contra la app real y Supabase local (`pnpm db:start` + `pnpm db:reset`).

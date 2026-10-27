@@ -48,3 +48,6 @@ export function formatDateKey(key: string, opts: Intl.DateTimeFormatOptions = { 
 
 const WEEKDAYS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 export const isoWeekdayName = (isoDay: number) => WEEKDAYS[isoDay - 1] ?? "";
+
+/** Instante ISO de hace `days` días (para filtros de consultas en el servidor). */
+export const isoDaysAgo = (days: number) => new Date(Date.now() - days * 86_400_000).toISOString();

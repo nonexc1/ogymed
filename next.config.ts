@@ -52,6 +52,8 @@ const nextConfig: NextConfig = {
   typedRoutes: false,
   experimental: {
     globalNotFound: true,
+    // Subida de imágenes por acción del servidor. Vercel limita el cuerpo a 4,5 MB.
+    serverActions: { bodySizeLimit: "4.5mb" },
   },
   images: {
     formats: ["image/avif", "image/webp"],

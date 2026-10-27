@@ -219,6 +219,19 @@ begin
 end;
 $$;
 
+-- Registro auditado del restablecimiento de MFA (los factores se eliminan con la Admin API de Auth).
+create or replace function public.admin_record_mfa_reset(p_user_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform private.require_staff(array['admin']::public.staff_role[]);
+  perform private.audit('staff.mfa_reset', 'staff', p_user_id::text);
+end;
+$$;
+
 -- Sólo funciona mientras no exista ningún administrador (alta inicial documentada en ADMIN_GUIDE).
 create or replace function public.bootstrap_first_admin(p_user_id uuid, p_display_name text)
 returns jsonb
@@ -426,6 +439,7 @@ begin
     'public.staff_whoami()',
     'public.admin_list_staff()',
     'public.admin_upsert_staff(uuid, text, public.staff_role[], uuid, boolean, boolean)',
+    'public.admin_record_mfa_reset(uuid)',
     'public.admin_update_complaint(uuid, text, text)',
     'public.admin_update_privacy_request(uuid, text, text)',
     'public.staff_update_contact_request(uuid, text)',
