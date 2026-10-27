@@ -33,7 +33,7 @@ export default async function BlogPage() {
       <header className="mt-6 max-w-3xl">
         <h1 className="text-4xl sm:text-5xl">{page?.title ?? "Blog"}</h1>
         <p className="mt-4 text-lg text-muted">
-          {page?.intro ?? "Información educativa general. No sustituye una consulta médica."}
+          {page?.intro || "Información educativa general. No sustituye una consulta médica."}
         </p>
       </header>
       {posts.length ? (

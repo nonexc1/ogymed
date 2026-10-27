@@ -14,7 +14,7 @@ GoTrue, PostgREST, Storage, Mailpit), Chromium de Playwright 1.63. **Nada de est
 | `pnpm typecheck` | ✅ sin errores |
 | `pnpm test` (unitarias) | ✅ 4 archivos, 21 pruebas |
 | `pnpm db:reset` | ✅ 5 migraciones + seed demo desde cero |
-| `pnpm test:db` | ✅ 2 archivos, 40 pruebas (repetida 12+ veces seguidas sin fallos tras corregir un deadlock) |
+| `pnpm test:db` | ✅ 2 archivos, 41 pruebas (repetida 12+ veces seguidas sin fallos tras corregir un deadlock) |
 | `pnpm build` | ✅ build de producción (páginas públicas estáticas/ISR; reservas, panel y API dinámicas) |
 | `pnpm test:e2e` | ✅ 16 pruebas (13 escritorio + 3 móvil Pixel 7) |
 | `pnpm audit --prod` | ✅ «No known vulnerabilities found» |

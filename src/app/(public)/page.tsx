@@ -58,8 +58,8 @@ export default async function HomePage() {
               {sections.hero_title ?? page?.title ?? "Atención ginecológica en Santiago de Surco, Lima"}
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted sm:text-xl">
-              {sections.hero_text ??
-                page?.intro ??
+              {sections.hero_text ||
+                page?.intro ||
                 (settings.booking_mode === "off"
                   ? "Solicita tu cita y recepción coordinará contigo el horario."
                   : "Consulta la disponibilidad real y reserva tu cita en línea, sin crear una cuenta.")}

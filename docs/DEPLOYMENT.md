@@ -84,7 +84,10 @@ variables por entorno (Production / Preview) apuntando a proyectos Supabase dist
 1. Desplegar con `booking_mode = off` (por defecto): la web muestra «Solicitar cita».
 2. `pnpm bootstrap:admin --email <admin> --name "<nombre>"` con las variables de producción en el
    entorno (una sola vez; después se invita desde el panel).
-3. Cargar configuración pública (NAP, horarios), textos legales validados y publicarlos.
+3. Aplicar todas las migraciones (incluida `20261028000100_placeholder_guard.sql`) y cargar el contenido
+   inicial: Supabase → SQL Editor → pegar `supabase/content/contenido-inicial.sql` → Run; en el panel,
+   Contenido → «Actualizar la web ahora». Detalle de estados en `ADMIN_GUIDE.md` §5.
+   Cargar configuración pública (NAP, horarios), completar los textos legales validados y publicarlos.
 4. Cargar profesionales (CMP/RNE verificados), servicios aprobados y revisados, horarios y feriados.
 5. Correo de recepción para avisos internos. Probar un envío real.
 6. Ensayo completo con datos sintéticos en staging; luego activar `reception` o `automatic`.

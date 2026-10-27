@@ -6,7 +6,7 @@ import { ContentStatus, DemoBadge, PageHeader, Panel, Table } from "@/components
 import { Field, Input } from "@/components/ui/field";
 import { hasRole, requireStaff } from "@/lib/auth/staff";
 
-import { createPage, createPost } from "./actions";
+import { createPage, createPost, refreshPublicSite } from "./actions";
 import { PAGE_KINDS } from "./page-kinds";
 
 export const metadata: Metadata = { title: "Contenido" };
@@ -24,7 +24,15 @@ export default async function ContentIndexPage() {
   const byKind = new Map((pages ?? []).map((p) => [p.kind, p]));
   return (
     <>
-      <PageHeader title="Contenido" description="Páginas, preguntas frecuentes y blog. Todo se edita como borrador y se publica explícitamente." />
+      <PageHeader
+        title="Contenido"
+        description="Páginas, preguntas frecuentes y blog. Todo se edita como borrador y se publica explícitamente."
+        actions={
+          canEdit ? (
+            <ActionForm action={refreshPublicSite} submitLabel="Actualizar la web ahora" submitVariant="secondary" inline />
+          ) : null
+        }
+      />
       <div className="space-y-6">
         <Panel title="Páginas">
           <Table>

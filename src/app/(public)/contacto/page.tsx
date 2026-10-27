@@ -35,7 +35,7 @@ export default async function ContactPage() {
       <header className="mt-6 max-w-3xl">
         <h1 className="text-4xl sm:text-5xl">{page?.title ?? "Contacto"}</h1>
         <p className="mt-4 text-lg text-muted">
-          {page?.intro ?? `Estamos en ${settings.district}, ${settings.city}. Escríbenos, llámanos o reserva en línea.`}
+          {page?.intro || `Estamos en ${settings.district}, ${settings.city}. Escríbenos, llámanos o reserva en línea.`}
         </p>
       </header>
       <ContactActions settings={settings} bookingLabel={bookingLabel} position="contact" className="mt-8" />

@@ -55,7 +55,7 @@ auditoría, reportes y exportación CSV auditada, previsualización.
 |---|---|
 | `pnpm lint` / `pnpm typecheck` | Sin errores |
 | `pnpm test` | 21 pruebas unitarias OK |
-| `pnpm db:reset` + `pnpm test:db` | 40 pruebas SQL OK (repetida 12+ veces seguidas) |
+| `pnpm db:reset` + `pnpm test:db` | 41 pruebas SQL OK (repetida 12+ veces seguidas) |
 | `pnpm build` | OK (también en modo producción con `APP_ENV=production SITE_INDEXING=on`) |
 | `pnpm test:e2e` | 16 pruebas OK (13 escritorio + 3 móvil), incl. axe y teclado |
 | `pnpm audit --prod` | Sin vulnerabilidades conocidas |
@@ -86,6 +86,22 @@ auditoría, reportes y exportación CSV auditada, previsualización.
   `SUPABASE_SERVICE_ROLE_KEY`); y las claves de caché incluyen el proyecto de Supabase, porque la
   reproducción mostró contenido de un build anterior servido desde `.next/cache` (Vercel la reutiliza
   entre despliegues). Guía de diagnóstico en `DEPLOYMENT.md` §8.
+
+## Contenido inicial para producción (2026-10-27)
+
+`supabase/content/contenido-inicial.sql` (idempotente, para el SQL Editor de Supabase) carga textos
+reales **sin datos inventados**: portada, la clínica, contacto, preguntas frecuentes (9), índices →
+**publicados**; 6 servicios candidatos, «Tu primera visita» y 6 artículos con fuentes OMS/MedlinePlus
+(URLs comprobadas) → **en revisión médica** (el encargo exige que los borradores asistidos por IA queden
+en revisión); 5 textos legales → **borrador** con campos `[COMPLETAR: …]`. Nueva migración
+`20261028000100_placeholder_guard.sql`: la base impide publicar cualquier texto con `[COMPLETAR`.
+Nuevo botón «Actualizar la web ahora» (Contenido, admin/editor). El sitemap omite índices sin elementos.
+
+Verificado en local con un build `VERCEL_ENV=production` sobre una base sin seed: el script corre dos
+veces sin duplicar, respeta páginas ya escritas y reemplaza borradores vacíos; 7 páginas responden 200,
+«Primera visita» y legales siguen ocultas; aprobación de los 6 servicios desde el panel con un revisor
+de prueba y bloqueo de «Primera visita» por `[COMPLETAR]` con mensaje claro. `pnpm test:db` (41, nueva
+prueba del bloqueo), `pnpm test`, lint, typecheck y 16 e2e en verde.
 
 ## Bloqueos concretos (necesito de OGYMED)
 

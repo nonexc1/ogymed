@@ -81,6 +81,29 @@ Estados: **Borrador → En revisión médica → Publicado → Archivado**.
   `/blog`; el sistema impide bucles.
 * No inventar estudios, testimonios, años de experiencia ni promesas de resultados. No publicar páginas
   vacías para aparentar amplitud.
+* **Campos `[COMPLETAR: …]`**: marcan datos que sólo OGYMED puede aportar. La base **impide publicar**
+  cualquier texto que conserve `[COMPLETAR` (también el aviso de «borrador legal», que se borra cuando la
+  asesoría valida el texto).
+* **«Actualizar la web ahora»** (Contenido, arriba a la derecha): fuerza que la web pública relea lo
+  publicado. Sólo hace falta tras cargar contenido directamente en la base (p. ej. el contenido inicial);
+  publicar desde el panel ya actualiza la web.
+
+### Contenido inicial (una sola vez, al lanzar)
+
+`supabase/content/contenido-inicial.sql` carga textos reales sin datos inventados. Pegarlo en Supabase →
+SQL Editor → Run; después, Contenido → «Actualizar la web ahora». No duplica nada si se repite y respeta
+lo ya escrito en el panel. Resultado:
+
+| Qué | Estado tras el script | Qué hacer |
+|---|---|---|
+| Portada, La clínica, Contacto, Preguntas frecuentes (+9 preguntas), índices de Servicios/Equipo/Blog | Publicado | Revisar y ajustar el tono si se desea |
+| 6 servicios candidatos | En revisión médica | Un **revisor médico** aprueba sólo los que OGYMED ofrece; el resto → Archivar |
+| «Tu primera visita» | En revisión médica | Completar documentos y llegada (`[COMPLETAR]`) y aprobar |
+| 6 artículos del blog (con fuentes OMS/MedlinePlus) | En revisión médica | Requieren un profesional con perfil publicado como revisor |
+| Privacidad, cookies, términos, política de citas, libro de reclamaciones | Borrador legal | Completar datos, validar con asesoría, borrar el aviso y publicar |
+
+Mientras la **política de privacidad** no esté publicada, los formularios (solicitar cita, contacto) se
+muestran como «no disponibles todavía»: es el bloqueo legal previsto.
 
 ## 6. Configuración (sólo Administración)
 

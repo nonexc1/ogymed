@@ -298,6 +298,17 @@ describe("CMS: flujo editorial, revisión médica y redirecciones", () => {
     expect(pub.rows[0].data.medical_reviewed_at).toBeTruthy();
   });
 
+  it("un texto con campos [COMPLETAR …] no se puede publicar ni siquiera con revisión médica", async () => {
+    const id = await newService(`completar-${uid().slice(0, 8)}`);
+    await admin.query("update public.services set body_md = 'Plazo: [COMPLETAR: plazo validado]' where id = $1", [id]);
+    const editor = await createStaff(admin, ["editor"]);
+    const reviewer = await createStaff(admin, ["professional"], { canReviewMedical: true, doctorId: (await createOffer(admin)).doctorId });
+    await asUser(user, editor, "aal2", (c) => rpc(c, "cms_transition", ["service", id, "submit"]));
+    await expect(asUser(user, reviewer, "aal2", (c) => rpc(c, "cms_transition", ["service", id, "publish"]))).rejects.toThrow(/placeholder_pending/);
+    const pub = await asAnon(user, (c) => c.query("select 1 from public.published_content where entity_id = $1", [id]));
+    expect(pub.rowCount).toBe(0);
+  });
+
   it("editar algo publicado mantiene el snapshot y vuelve a borrador; editor no cambia estado directo", async () => {
     const slug = `editorial-${uid().slice(0, 8)}`;
     const id = await newService(slug);

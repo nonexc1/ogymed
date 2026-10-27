@@ -11,6 +11,7 @@ export function dbErrorMessage(error: { code?: string; message?: string } | null
     [/credentials_unverified/, "Verifica CMP/RNE antes de publicar el perfil."],
     [/media_rights_unconfirmed/, "Confirma los derechos de uso de las imágenes antes de publicar."],
     [/media_alt_missing/, "Las imágenes necesitan texto alternativo antes de publicar."],
+    [/placeholder_pending/, "El texto tiene campos [COMPLETAR …] sin rellenar. Complétalos antes de publicar."],
     [/redirect_loop/, "La redirección formaría un bucle."],
     [/redirect_chain_too_long/, "La cadena de redirecciones es demasiado larga."],
     [/last_admin/, "Debe quedar al menos un administrador activo."],

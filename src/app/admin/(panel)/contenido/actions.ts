@@ -1,11 +1,12 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import type { ActionResult } from "@/components/admin/action-form";
 import { firstIssue, optText, optUuid, reqText, slugSchema } from "@/features/cms/admin/form-helpers";
+import { CONTENT_TAG, SETTINGS_TAG } from "@/features/cms/queries";
 import { homeSectionsSchema } from "@/features/cms/types";
 import { dbErrorMessage } from "@/lib/auth/errors";
 import { requireStaff } from "@/lib/auth/staff";
@@ -14,6 +15,14 @@ import { PAGE_KINDS } from "./page-kinds";
 
 const bad = (message: string): ActionResult => ({ ok: false, message });
 
+
+/** Fuerza que la web pública relea lo publicado (p. ej. tras cargar contenido directamente en la base). */
+export async function refreshPublicSite(): Promise<ActionResult> {
+  await requireStaff(["admin", "editor"]);
+  updateTag(CONTENT_TAG);
+  updateTag(SETTINGS_TAG);
+  return { ok: true, message: "Listo: la web pública mostrará lo publicado en la próxima visita." };
+}
 
 export async function createPage(_: ActionResult, fd: FormData): Promise<ActionResult> {
   const { supabase } = await requireStaff(["admin", "editor"]);

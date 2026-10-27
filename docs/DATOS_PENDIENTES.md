@@ -96,8 +96,11 @@ en desarrollo. Obstetricia, fertilidad o ginecología regenerativa no se crean s
 
 | Dato | Estado |
 |---|---|
-| Textos de portada, la clínica, primera visita (documentos y preparación confirmados) | ⛔ |
-| Preguntas frecuentes operativas reales | ⚠️ |
+| Textos de portada, la clínica, primera visita | ✅ redactados (`supabase/content/contenido-inicial.sql`); «Primera visita» espera documentos/llegada `[COMPLETAR]` y revisión médica |
+| Servicios: confirmar cuáles de los 6 candidatos se ofrecen y aprobarlos (revisor médico) | ⛔ |
+| Artículos del blog (6 redactados con fuentes): revisor médico con perfil publicado | ⛔ |
+| Textos legales: borradores con campos `[COMPLETAR]` (razón social, RUC, domicilio, correo de privacidad, plazos, región de alojamiento, menores, banco de datos) | ⛔ |
+| Preguntas frecuentes operativas reales | ✅ 9 publicadas (funcionamiento verificado en el código); añadir pagos/seguros cuando se confirmen |
 | Fotografías reales de instalaciones con autorización | ⚠️ |
 | Accesibilidad física de la sede (ascensor, rampas, estacionamiento) | ℹ️ |
 | Testimonios: sólo si existen y hay autorización escrita | ℹ️ (no se muestran) |
