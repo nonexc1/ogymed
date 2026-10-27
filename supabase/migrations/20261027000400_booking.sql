@@ -882,8 +882,10 @@ as $$
 declare
   v_expires timestamptz := now() + make_interval(hours => (private.settings()).access_link_ttl_hours);
 begin
+  -- Idempotente: el worker deriva el mismo token para los reintentos de un mismo mensaje.
   insert into private.access_tokens (token_hash, contact_id, appointment_id, expires_at)
-  values (p_token_hash, p_contact_id, p_appointment_id, v_expires);
+  values (p_token_hash, p_contact_id, p_appointment_id, v_expires)
+  on conflict (token_hash) do nothing;
   return jsonb_build_object('ok', true, 'expires_at', v_expires);
 end;
 $$;

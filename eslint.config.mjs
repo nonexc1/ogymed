@@ -17,6 +17,9 @@ export default defineConfig([
   {
     rules: {
       "no-console": ["warn", { allow: ["warn", "error", "info"] }],
+      // Intencional: los enlaces entre root layouts (público ↔ reservas/admin) y hacia rutas sin
+      // analítica usan <a> para forzar una carga completa y descargar cualquier script de GA4.
+      "@next/next/no-html-link-for-pages": "off",
     },
   },
 ]);

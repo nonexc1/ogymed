@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/*
+ * Identidad PROVISIONAL de OGYMED (sustituir cuando la clínica entregue logo/manual).
+ * Contrastes verificados (WCAG 2.2): ink/ivory 14.6:1 · plum/ivory 11.5:1 · plum/rose 9.2:1 ·
+ * sage-strong/ivory 6.0:1 · muted/ivory 6.8:1. sage (#697C73) = 4.2:1 → sólo decorativo o texto grande.
+ */
+@theme {
+  --color-ivory: #faf8f5;
+  --color-paper: #ffffff;
+  --color-plum: #51283f;
+  --color-plum-strong: #3e2030;
+  --color-plum-soft: #f4edf1;
+  --color-rose: #eadce3;
+  --color-sage: #697c73;
+  --color-sage-strong: #556259;
+  --color-sage-soft: #e9eeeb;
+  --color-ink: #27232a;
+  --color-muted: #5c5560;
+  --color-line: #e3dcd8;
+  --color-danger: #9b1c2c;
+  --color-danger-soft: #fbeaec;
+  --color-success: #2f6b4f;
+  --color-success-soft: #e6f2ec;
+  --color-warning: #7a4b00;
+  --color-warning-soft: #fdf3e1;
+
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-card: 1.25rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    @apply bg-ivory text-ink font-sans antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+  h1, h2, h3 {
+    @apply font-display text-plum-strong;
+    font-variation-settings: "opsz" 72;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-plum);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--color-rose);
+    color: var(--color-plum-strong);
+  }
+}
+
+/* Texto editorial (Markdown sanitizado). */
+.prose-ogymed {
+  max-width: 68ch;
+}
+.prose-ogymed > * + * {
+  margin-top: 1em;
+}
+.prose-ogymed h2 {
+  font-size: 1.6rem;
+  margin-top: 2em;
+}
+.prose-ogymed h3 {
+  font-size: 1.3rem;
+  margin-top: 1.6em;
+}
+.prose-ogymed ul {
+  list-style: disc;
+  padding-left: 1.4em;
+}
+.prose-ogymed ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+.prose-ogymed li + li {
+  margin-top: 0.35em;
+}
+.prose-ogymed a {
+  color: var(--color-plum);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-ogymed blockquote {
+  border-left: 3px solid var(--color-rose);
+  padding-left: 1em;
+  color: var(--color-muted);
+}
+.prose-ogymed table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose-ogymed th,
+.prose-ogymed td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.5em;
+  text-align: left;
+}
+
+/* La barra inferior móvil se oculta mientras el banner de cookies está abierto. */
+html[data-consent-open="true"] .mobile-cta-bar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
