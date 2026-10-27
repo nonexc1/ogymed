@@ -5,6 +5,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseOrigin = supabaseUrl ? new URL(supabaseUrl).origin : "";
 const isProductionDeploy = process.env.VERCEL_ENV === "production" || process.env.APP_ENV === "production";
 const indexable = isProductionDeploy && process.env.SITE_INDEXING === "on";
+// HSTS y upgrade-insecure-requests sólo cuando el sitio se sirve por HTTPS (no en pruebas locales).
+const httpsSite = (process.env.NEXT_PUBLIC_SITE_URL ?? "").startsWith("https://");
 
 /**
  * CSP sin nonces (las páginas públicas son estáticas/ISR). 'unsafe-inline' en scripts es necesario
@@ -26,7 +28,7 @@ function csp(withAnalytics: boolean) {
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
-    ...(isDev ? [] : ["upgrade-insecure-requests"]),
+    ...(httpsSite ? ["upgrade-insecure-requests"] : []),
   ].join("; ");
 }
 
@@ -36,7 +38,7 @@ const baseHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-  ...(isDev ? [] : [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]),
+  ...(httpsSite ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }] : []),
 ];
 
 const privateHeaders = [

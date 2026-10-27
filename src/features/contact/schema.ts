@@ -10,8 +10,8 @@ export const contactSchema = z
     topic: z.enum(["cita", "informacion", "otro"], { error: "Elige un motivo" }),
     message: z.string().trim().max(1000, "Máximo 1000 caracteres").default(""),
     privacy: z.literal(true, { error: "Necesitamos tu autorización para responderte" }),
-    // Honeypot: debe llegar vacío.
-    website: z.string().max(0).optional(),
+    // Honeypot: si llega completado, el servidor responde éxito sin guardar nada.
+    website: z.string().max(200).optional(),
   })
   .refine((v) => Boolean(v.email) || Boolean(v.phone), {
     message: "Indica un correo o un teléfono",

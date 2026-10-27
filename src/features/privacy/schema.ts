@@ -7,7 +7,8 @@ export const privacyRequestSchema = z.object({
   requester_name: nameSchema,
   email: emailSchema,
   detail: z.string().trim().max(2000).default(""),
-  website: z.string().max(0).optional(),
+  // Honeypot (ver features/contact/schema.ts).
+  website: z.string().max(200).optional(),
 });
 
 export type PrivacyRequestInput = z.input<typeof privacyRequestSchema>;

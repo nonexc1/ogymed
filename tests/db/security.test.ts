@@ -191,6 +191,7 @@ describe("autogestión con enlaces opacos", () => {
 describe("outbox de notificaciones", () => {
   it("reintentos con backoff, fallo visible y reintento manual sin duplicados", async () => {
     const fx = await createOffer(admin);
+    const previous = (await admin.query("select reception_notification_email as e from public.clinic_settings_private where id")).rows[0].e;
     await admin.query("update public.clinic_settings_private set reception_notification_email = 'recepcion@example.test' where id");
     try {
       const booked = await bookConfirmed(service, fx, limaInstant(day, "16:00"));
@@ -242,7 +243,7 @@ describe("outbox de notificaciones", () => {
       const count = await admin.query("select count(*)::int as n from public.notification_outbox where dedupe_key = $1", [target.dedupe_key]);
       expect(count.rows[0].n).toBe(1);
     } finally {
-      await admin.query("update public.clinic_settings_private set reception_notification_email = null where id");
+      await admin.query("update public.clinic_settings_private set reception_notification_email = $1 where id", [previous]);
     }
   });
 

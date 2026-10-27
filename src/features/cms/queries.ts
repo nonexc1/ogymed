@@ -53,7 +53,8 @@ const fetchPublished = unstable_cache(
     }
     return (data ?? []) as Row[];
   },
-  ["published-content-v1"],
+  // El filtro de demo forma parte de la clave: nunca reutilizar en producción una caché con datos demo.
+  ["published-content-v1", hideDemoContent ? "sin-demo" : "con-demo"],
   { tags: [CONTENT_TAG], revalidate: REVALIDATE_SECONDS },
 );
 

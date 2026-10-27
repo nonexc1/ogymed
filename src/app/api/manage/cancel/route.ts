@@ -18,6 +18,6 @@ export async function POST(request: NextRequest) {
     return fail("unavailable", 503);
   }
   const result = data as RpcResult;
-  if (result.ok) after(() => processOutbox(10).catch(() => undefined));
+  if (result.ok) after(() => processOutbox(10, g.data.appointmentId).catch(() => undefined));
   return json(result, result.ok ? 200 : 409);
 }

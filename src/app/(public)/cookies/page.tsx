@@ -13,7 +13,8 @@ export default function CookiesPage() {
     <CmsPage kind="cookies" path="/cookies">
       <Card className="mt-12 max-w-3xl space-y-4">
         <h2 className="text-2xl">Cookies que usa este sitio</h2>
-        <div className="overflow-x-auto">
+        {/* Contenedor desplazable enfocable para usuarios de teclado (WCAG 2.1.1). */}
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla de cookies">
           <table className="w-full text-left text-base">
             <caption className="sr-only">Cookies por categoría</caption>
             <thead>

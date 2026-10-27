@@ -7,7 +7,7 @@ import type { Media } from "@/features/cms/types";
 import { siteUrl } from "@/lib/env";
 import { indexingEnabled } from "@/lib/env.server";
 
-export const absoluteUrl = (path: string) => `${siteUrl}${path === "/" ? "" : path}` || siteUrl;
+export const absoluteUrl = (path: string) => `${siteUrl}${path}`;
 
 /**
  * Metadata por página: canonical absoluto al dominio configurado, OG/Twitter y robots.

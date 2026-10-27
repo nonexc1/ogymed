@@ -31,7 +31,7 @@ export function Panel({ title, children, className, actions }: { title?: string;
 
 export function Table({ className, ...props }: ComponentProps<"table">) {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabla (desplazable)">
       <table className={cn("w-full min-w-[36rem] border-collapse text-left text-sm [&_td]:border-b [&_td]:border-line [&_td]:px-3 [&_td]:py-2.5 [&_th]:border-b [&_th]:border-line [&_th]:px-3 [&_th]:py-2 [&_th]:font-semibold [&_th]:text-muted", className)} {...props} />
     </div>
   );

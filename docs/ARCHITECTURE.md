@@ -99,6 +99,11 @@ EXCLUDE USING gist (doctor_id WITH =, occupied WITH &&) WHERE (blocks_capacity)
   guardan en `timestamptz` (UTC) y se muestran como «Hora de Lima».
 * El servidor determina duración, fin, buffers y estado; el cliente sólo envía servicio, profesional
   e inicio elegidos de la lista devuelta por el servidor.
+* La adquisición de capacidad (retener, registrar, reprogramar, reactivar) toma antes un bloqueo
+  transaccional por profesional y por recurso (`pg_advisory_xact_lock`, orden fijo). Así las
+  operaciones concurrentes sobre la misma agenda se serializan y la segunda ve el resultado de la
+  primera, en lugar de esperarse mutuamente en la restricción (deadlock, detectado en pruebas de carga
+  concurrente). La `EXCLUDE` sigue siendo la garantía final.
 * Reprogramar actualiza la **misma fila** en una sentencia: si el destino choca, la sentencia falla y
   la cita original queda intacta; si funciona, el origen se libera en el mismo instante.
 * `version` se incrementa con cada cambio de horario/estado; los recordatorios de versiones

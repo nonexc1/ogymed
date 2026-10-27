@@ -115,7 +115,7 @@ export function Footer({ settings, legal }: { settings: PublicSettings; legal: {
           © {new Date().getFullYear()} {settings.legal_name ?? settings.clinic_name}
           {settings.ruc ? ` · RUC ${settings.ruc}` : ""}
         </p>
-        <a href="/admin" className="text-muted/80 hover:text-plum" rel="nofollow">
+        <a href="/admin" className="text-muted hover:text-plum" rel="nofollow">
           Acceso del personal
         </a>
       </Container>

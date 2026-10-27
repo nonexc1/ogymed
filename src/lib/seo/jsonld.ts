@@ -54,7 +54,7 @@ export function breadcrumbJsonLd(items: { name: string; href: string }[]) {
       "@type": "ListItem",
       position: i + 1,
       name: c.name,
-      item: `${siteUrl}${c.href === "/" ? "" : c.href}`,
+      item: `${siteUrl}${c.href}`,
     })),
   };
 }

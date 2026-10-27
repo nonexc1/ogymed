@@ -513,6 +513,26 @@ begin
 end;
 $$;
 
+-- Serializa la ADQUISICIÓN de capacidad por profesional y por recurso (orden fijo: profesional y luego
+-- recursos ordenados por id). Sin esto, dos inserciones concurrentes que chocan en la EXCLUDE pueden
+-- esperarse mutuamente (deadlock): la exclusión sigue garantizando un solo ganador, pero el perdedor
+-- recibiría un error en vez de «horario tomado». El bloqueo dura hasta el fin de la transacción.
+create or replace function private.lock_capacity(p_doctor_id uuid, p_service_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  r record;
+begin
+  perform pg_advisory_xact_lock(hashtextextended('ogymed:doctor:' || p_doctor_id::text, 0));
+  for r in select sr.resource_id from public.service_resources sr where sr.service_id = p_service_id order by sr.resource_id loop
+    perform pg_advisory_xact_lock(hashtextextended('ogymed:resource:' || r.resource_id::text, 0));
+  end loop;
+end;
+$$;
+
 create or replace function private.session_by_hash(p_token_hash text)
 returns private.booking_sessions
 language sql
@@ -615,7 +635,10 @@ begin
     return jsonb_build_object('ok', false, 'code', 'booking_disabled');
   end if;
 
-  -- Reintento/doble clic de la misma sesión sobre el mismo horario → misma retención.
+  perform private.lock_capacity(p_doctor_id, p_service_id);
+
+  -- Reintento/doble clic de la misma sesión sobre el mismo horario → misma retención
+  -- (tras el bloqueo: ve la retención ya confirmada por una petición concurrente).
   select a.id into v_id from public.appointments a
   where a.booking_session_id = s.id and a.status = 'hold' and a.hold_expires_at > now()
     and a.doctor_id = p_doctor_id and a.service_id = p_service_id and a.starts_at = p_starts_at;
@@ -656,6 +679,8 @@ begin
     if v_id is not null then
       return jsonb_build_object('ok', true, 'hold', private.appointment_public_json(v_id));
     end if;
+    return jsonb_build_object('ok', false, 'code', 'slot_taken');
+  when deadlock_detected then
     return jsonb_build_object('ok', false, 'code', 'slot_taken');
   when sqlstate 'OG001' then
     return jsonb_build_object('ok', false, 'code', 'slot_unavailable');
@@ -1035,6 +1060,7 @@ begin
     return jsonb_build_object('ok', false, 'code', 'outside_window');
   end if;
 
+  perform private.lock_capacity(p_doctor_id, a.service_id);
   begin
     v_offer := private.validate_slot(a.service_id, p_doctor_id, p_starts_at, 'web', a.id);
     if v_offer.doctor_id is null then
@@ -1047,7 +1073,7 @@ begin
     update public.appointments set doctor_id = p_doctor_id, starts_at = p_starts_at, ends_at = v_ends,
       buffer_before_minutes = v_offer.buffer_before_minutes, buffer_after_minutes = v_offer.buffer_after_minutes
     where id = a.id;
-  exception when exclusion_violation then
+  exception when exclusion_violation or deadlock_detected then
     return jsonb_build_object('ok', false, 'code', 'slot_taken');
   end;
 
@@ -1093,7 +1119,10 @@ $$;
 -- ---------------------------------------------------------------------------
 -- Outbox: reclamo con lease, contexto para renderizar y cierre con backoff
 -- ---------------------------------------------------------------------------
-create or replace function public.outbox_claim(p_worker text, p_limit integer default 20, p_lease_seconds integer default 120)
+-- p_appointment_id (opcional): procesar primero los avisos de una cita recién cambiada.
+create or replace function public.outbox_claim(
+  p_worker text, p_limit integer default 20, p_lease_seconds integer default 120, p_appointment_id uuid default null
+)
 returns setof public.notification_outbox
 language sql
 security definer
@@ -1101,8 +1130,9 @@ set search_path = ''
 as $$
   with due as (
     select o.id from public.notification_outbox o
-    where (o.status = 'pending' and o.next_attempt_at <= now())
-       or (o.status = 'sending' and o.locked_until < now())
+    where ((o.status = 'pending' and o.next_attempt_at <= now())
+       or (o.status = 'sending' and o.locked_until < now()))
+      and (p_appointment_id is null or o.appointment_id = p_appointment_id)
     order by o.next_attempt_at
     limit greatest(1, least(p_limit, 100))
     for update skip locked
@@ -1277,6 +1307,7 @@ begin
     return jsonb_build_object('ok', false, 'code', 'contact_required');
   end if;
 
+  perform private.lock_capacity(p_doctor_id, p_service_id);
   begin
     v_offer := private.validate_slot(p_service_id, p_doctor_id, p_starts_at, 'staff');
     if v_offer.doctor_id is null then
@@ -1303,7 +1334,7 @@ begin
       case when not p_confirm then least(now() + make_interval(hours => cfg.pending_expiry_hours), p_starts_at) end,
       nullif(trim(p_note), ''), v_uid, v_uid)
     returning id into v_id;
-  exception when exclusion_violation then
+  exception when exclusion_violation or deadlock_detected then
     return jsonb_build_object('ok', false, 'code', 'slot_taken');
   end;
 
@@ -1348,6 +1379,7 @@ begin
 
   begin
     if p_to = 'confirmed' and a.status in ('expired', 'cancelled') then
+      perform private.lock_capacity(a.doctor_id, a.service_id);
       -- Reactivar exige revalidar horario y capacidad (la EXCLUDE vuelve a comprobarse al bloquear).
       if private.validate_slot(a.service_id, a.doctor_id, a.starts_at, 'staff', a.id) is null then
         return jsonb_build_object('ok', false, 'code', 'slot_unavailable');
@@ -1362,7 +1394,7 @@ begin
       cancellation_reason = case when p_to = 'cancelled' then coalesce(p_reason, 'other') else cancellation_reason end
     where id = a.id;
   exception
-    when exclusion_violation then
+    when exclusion_violation or deadlock_detected then
       return jsonb_build_object('ok', false, 'code', 'slot_taken');
     when sqlstate '22023' then
       return jsonb_build_object('ok', false, 'code', 'invalid_transition');
@@ -1396,6 +1428,7 @@ begin
   if a.id is null or a.status not in ('pending_confirmation', 'confirmed') then
     return jsonb_build_object('ok', false, 'code', 'not_found');
   end if;
+  perform private.lock_capacity(p_doctor_id, a.service_id);
   begin
     v_offer := private.validate_slot(a.service_id, p_doctor_id, p_starts_at, 'staff', a.id);
     if v_offer.doctor_id is null then
@@ -1408,7 +1441,7 @@ begin
       buffer_before_minutes = v_offer.buffer_before_minutes, buffer_after_minutes = v_offer.buffer_after_minutes,
       updated_by = v_uid
     where id = a.id;
-  exception when exclusion_violation then
+  exception when exclusion_violation or deadlock_detected then
     return jsonb_build_object('ok', false, 'code', 'slot_taken');
   end;
   perform private.log_event(a.id, 'staff', 'rescheduled', a.status, a.status,
@@ -1512,7 +1545,7 @@ begin
     'public.manage_reschedule(text, uuid, uuid, timestamptz)',
     'public.manage_logout(text)',
     'public.manage_request_link(text)',
-    'public.outbox_claim(text, integer, integer)',
+    'public.outbox_claim(text, integer, integer, uuid)',
     'public.outbox_context(uuid)',
     'public.outbox_complete(uuid, text, text, text, text)',
     'public.jobs_maintenance()',

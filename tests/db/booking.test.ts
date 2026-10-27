@@ -147,6 +147,24 @@ describe("prevención de cruces", () => {
     }
   });
 
+  it("estrés: 12 conexiones simultáneas sobre el mismo horario → 1 gana, 11 códigos limpios, 0 errores (sin deadlocks)", async () => {
+    const fx = await createOffer(admin, { duration: 45, interval: 15, bufferAfter: 10 });
+    const clients = await Promise.all(Array.from({ length: 12 }, () => connect()));
+    try {
+      const sessions = await Promise.all(clients.map((c) => newSession(c)));
+      const times = ["09:00", "09:15", "09:30", "09:00"];
+      const settled = await Promise.allSettled(
+        clients.map((c, i) => hold(c, sessions[i]!, fx, limaInstant(day, times[i % times.length]!))),
+      );
+      expect(settled.filter((r) => r.status === "rejected")).toEqual([]);
+      const results = settled.map((r) => (r as PromiseFulfilledResult<HoldResult>).value);
+      expect(results.filter((r) => r.ok)).toHaveLength(1);
+      expect(results.filter((r) => !r.ok).every((r) => r.code === "slot_taken" || r.code === "slot_unavailable")).toBe(true);
+    } finally {
+      await Promise.all(clients.map((c) => c.end()));
+    }
+  });
+
   it("los buffers bloquean horarios adyacentes", async () => {
     const fx = await createOffer(admin, { duration: 30, interval: 30, bufferAfter: 15 });
     await bookConfirmed(service, fx, limaInstant(day, "12:00"));

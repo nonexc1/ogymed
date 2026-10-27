@@ -24,8 +24,9 @@ export function Header({
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-ivory/95 backdrop-blur">
       <Container className="relative flex h-18 items-center justify-between gap-4 py-3">
-        <SiteLink href="/" className="rounded-lg" aria-label="OGYMED, ir a la portada">
+        <SiteLink href="/" className="rounded-lg">
           <Logo />
+          <span className="sr-only">, ir a la portada</span>
         </SiteLink>
         <nav aria-label="Principal" className="hidden lg:block">
           <ul className="flex items-center gap-1">

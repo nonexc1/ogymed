@@ -29,12 +29,20 @@ const LINK_KINDS = new Set(["booking_confirmed", "booking_received", "booking_re
  * Procesa mensajes pendientes del outbox. Seguro ante ejecuciones concurrentes (reclamo con
  * FOR UPDATE SKIP LOCKED + lease) y ante reintentos (clave de idempotencia = dedupe_key).
  */
-export async function processOutbox(limit = 20): Promise<{ claimed: number; sent: number; skipped: number; failed: number }> {
+export async function processOutbox(
+  limit = 20,
+  appointmentId: string | null = null,
+): Promise<{ claimed: number; sent: number; skipped: number; failed: number }> {
   const db = getServiceClient();
   const stats = { claimed: 0, sent: 0, skipped: 0, failed: 0 };
   if (!db) return stats;
   const worker = `w-${randomUUID()}`;
-  const { data: rows, error } = await db.rpc("outbox_claim", { p_worker: worker, p_limit: limit, p_lease_seconds: 120 });
+  const { data: rows, error } = await db.rpc("outbox_claim", {
+    p_worker: worker,
+    p_limit: limit,
+    p_lease_seconds: 120,
+    p_appointment_id: appointmentId,
+  });
   if (error) {
     console.error("outbox_claim_error", { code: error.code });
     return stats;

@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
     });
     if (!managed.error && (managed.data as RpcResult)?.ok) setSessionCookie(response, MANAGE_COOKIE, token, 30 * 60);
     // Optimización: intenta enviar ya. La garantía de entrega es el cron del outbox.
-    after(() => processOutbox(10).catch(() => undefined));
+    const appointmentId = (result.appointment as { appointment_id?: string } | undefined)?.appointment_id ?? null;
+    after(() => processOutbox(10, appointmentId).catch(() => undefined));
   }
   return response;
 }

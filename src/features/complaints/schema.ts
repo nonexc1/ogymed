@@ -27,7 +27,8 @@ export const complaintSchema = z
     detail: z.string().trim().min(10, "Describe el detalle (mínimo 10 caracteres)").max(3000),
     consumer_request: z.string().trim().min(2, "Indica tu pedido").max(1500),
     privacy: z.literal(true, { error: "Necesitamos tu autorización para registrar el reclamo" }),
-    website: z.string().max(0).optional(),
+    // Honeypot (ver features/contact/schema.ts).
+    website: z.string().max(200).optional(),
   })
   .refine((v) => !v.is_minor || v.guardian_name.length >= 2, { message: "Indica el nombre del padre, madre o apoderado", path: ["guardian_name"] });
 

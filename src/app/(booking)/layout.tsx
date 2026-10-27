@@ -37,8 +37,9 @@ export default async function BookingLayout({ children }: { children: React.Reac
         </a>
         <header className="border-b border-line bg-paper">
           <Container className="flex h-16 items-center justify-between">
-            <a href="/" aria-label={`${settings.clinic_name}, volver a la portada`} className="rounded-lg">
+            <a href="/" className="rounded-lg">
               <Logo name={settings.clinic_name} />
+              <span className="sr-only">, volver a la portada</span>
             </a>
             <p className="text-sm text-muted">Horarios en hora de Lima</p>
           </Container>

@@ -22,5 +22,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (types.has("doctor")) entries.set("/equipo", entries.get("/equipo") ?? new Date());
   if (types.has("post")) entries.set("/blog", entries.get("/blog") ?? new Date());
   entries.set("/contacto", entries.get("/contacto") ?? new Date());
-  return [...entries].map(([path, lastModified]) => ({ url: `${siteUrl}${path === "/" ? "" : path}`, lastModified }));
+  return [...entries].map(([path, lastModified]) => ({ url: `${siteUrl}${path}`, lastModified }));
 }

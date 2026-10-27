@@ -85,7 +85,7 @@ test("editor no accede a citas; publicar un servicio exige revisión médica", a
   const rctx = await browser.newContext();
   const rp = await rctx.newPage();
   await loginWithMfa(rp, reviewer);
-  const [{ id }] = await sql<{ id: string }>("select id from public.services where slug = $1", [slug]);
+  const id = (await sql<{ id: string }>("select id from public.services where slug = $1", [slug]))[0]!.id;
   await rp.goto(`/admin/servicios/${id}`);
   await rp.getByRole("button", { name: "Aprobar revisión médica y publicar" }).click();
   await expect(rp.getByTestId("content-status")).toHaveText(/^Publicado$/);
