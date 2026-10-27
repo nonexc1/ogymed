@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/surface";
-import { addDaysToKey, formatDateKey, formatLimaTime, limaDateKey } from "@/lib/datetime";
+import { addDaysToKey, formatDateKey, formatLimaTime, limaDateKey, ucfirst } from "@/lib/datetime";
 import { cn } from "@/lib/utils";
 
 import { bookingMessage } from "./messages";
@@ -172,7 +172,7 @@ export function SlotPicker({
           </fieldset>
           {activeDay ? (
             <div className="mt-6">
-              <h3 className="font-sans text-lg font-semibold capitalize text-ink">{formatDateKey(activeDay)}</h3>
+              <h3 className="font-sans text-lg font-semibold text-ink">{ucfirst(formatDateKey(activeDay))}</h3>
               {renderTimes(morning, "Mañana")}
               {renderTimes(afternoon, "Tarde")}
             </div>

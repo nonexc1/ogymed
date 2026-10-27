@@ -41,6 +41,7 @@ export default async function ContactPage() {
       <ContactActions settings={settings} bookingLabel={bookingLabel} position="contact" className="mt-8" />
       <div className="mt-12 grid gap-10 lg:grid-cols-2">
         <div className="space-y-6">
+          <h2 className="text-2xl">Dónde estamos</h2>
           <LocationCard settings={settings} position="contact" />
           {hasCoords ? (
             <VoluntaryMap latitude={settings.latitude!} longitude={settings.longitude!} label={addressText(settings) ?? settings.clinic_name} />

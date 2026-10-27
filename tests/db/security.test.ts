@@ -19,6 +19,7 @@ import {
 } from "./helpers";
 
 let admin: pg.Client;
+let previousMode: "off" | "reception" | "automatic";
 let service: pg.Client;
 let user: pg.Client;
 const day = limaDate(6);
@@ -27,11 +28,13 @@ beforeAll(async () => {
   admin = await connect();
   service = await connect();
   user = await connect();
+  previousMode = (await admin.query("select booking_mode from public.clinic_settings_public where id")).rows[0].booking_mode;
   await setBookingMode(admin, "automatic");
 });
 
 afterAll(async () => {
-  await setBookingMode(admin, "off");
+  // Restaurar el modo previo: no dejar la base de desarrollo en un estado distinto al encontrado.
+  await setBookingMode(admin, previousMode);
   await Promise.all([admin.end(), service.end(), user.end()]);
 });
 

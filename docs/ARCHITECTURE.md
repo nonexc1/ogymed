@@ -181,7 +181,9 @@ visible en el panel, con reintento.
 cancelled), lease (`locked_until`, `locked_by`), reclamo con `FOR UPDATE SKIP LOCKED`, backoff
 exponencial (máx. 6 h) y `max_attempts`. Al enviar se consulta `outbox_context`: si la cita cambió de
 versión o un recordatorio ya no corresponde a una cita confirmada, se marca `skipped`. Resend recibe
-la `dedupe_key` como clave de idempotencia. WhatsApp automático queda como adaptador futuro: sin
+la `dedupe_key` como clave de idempotencia; el token del enlace de gestión se deriva por HMAC del ID
+del mensaje para que los reintentos tengan el mismo contenido. Tras confirmar, cambiar o cancelar, se
+procesan primero los avisos de esa cita (`after()`); el cron es la garantía de entrega. WhatsApp automático queda como adaptador futuro: sin
 credenciales el panel muestra «No configurado».
 
 ## 11. Seguridad transversal

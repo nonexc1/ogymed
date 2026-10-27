@@ -51,3 +51,6 @@ export const isoWeekdayName = (isoDay: number) => WEEKDAYS[isoDay - 1] ?? "";
 
 /** Instante ISO de hace `days` días (para filtros de consultas en el servidor). */
 export const isoDaysAgo = (days: number) => new Date(Date.now() - days * 86_400_000).toISOString();
+
+/** Mayúscula sólo en la primera letra («Martes, 3 de noviembre»), sin capitalizar cada palabra. */
+export const ucfirst = (text: string) => (text ? text[0]!.toLocaleUpperCase("es-PE") + text.slice(1) : text);

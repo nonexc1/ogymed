@@ -1,5 +1,5 @@
 import type { PublicSettings } from "@/features/cms/types";
-import { isoWeekdayName } from "@/lib/datetime";
+import { isoWeekdayName, ucfirst } from "@/lib/datetime";
 
 function daysLabel(days: number[]) {
   const sorted = [...days].sort();
@@ -15,7 +15,7 @@ export function OpeningHours({ settings }: { settings: PublicSettings }) {
       <ul className="space-y-1">
         {settings.opening_hours.map((h, i) => (
           <li key={i}>
-            <span className="capitalize">{daysLabel(h.days)}</span>: {h.opens}–{h.closes}
+            <span>{ucfirst(daysLabel(h.days))}</span>: {h.opens}–{h.closes}
           </li>
         ))}
       </ul>

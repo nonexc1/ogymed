@@ -21,17 +21,20 @@ type HoldResult = { ok: boolean; code?: string; hold?: { appointment_id: string;
 type ConfirmResult = { ok: boolean; code?: string; replayed?: boolean; appointment?: { appointment_id: string; status: string } };
 
 let admin: pg.Client;
+let previousMode: "off" | "reception" | "automatic";
 let service: pg.Client;
 const day = limaDate(3);
 
 beforeAll(async () => {
   admin = await connect();
   service = await connect();
+  previousMode = (await admin.query("select booking_mode from public.clinic_settings_public where id")).rows[0].booking_mode;
   await setBookingMode(admin, "automatic");
 });
 
 afterAll(async () => {
-  await setBookingMode(admin, "off");
+  // Restaurar el modo previo: no dejar la base de desarrollo en un estado distinto al encontrado.
+  await setBookingMode(admin, previousMode);
   await admin.end();
   await service.end();
 });

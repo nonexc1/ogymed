@@ -5,7 +5,9 @@ export const fraunces = localFont({
   src: "./fonts/fraunces-latin-opsz.woff2",
   variable: "--font-fraunces",
   weight: "100 900",
-  display: "swap",
+  // Títulos: si la fuente no llega a tiempo se mantiene la alternativa (sin cambio tardío que
+  // retrase el LCP en redes móviles lentas); en visitas siguientes ya está en caché.
+  display: "optional",
   preload: true,
 });
 

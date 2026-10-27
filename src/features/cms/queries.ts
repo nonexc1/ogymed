@@ -127,23 +127,27 @@ export async function listPublishedPaths() {
     .map((r) => ({ path: r.path!, updatedAt: r.updated_at, type: r.entity_type }));
 }
 
+type Offering = { doctor_id: string; service_id: string; online_booking: boolean };
+
+// Las funciones cacheadas LANZAN ante errores: así un fallo momentáneo de la base no queda cacheado
+// como «vacío» (Next conserva el último valor válido); el valor vacío sólo se usa si nunca hubo caché.
 const fetchOfferings = unstable_cache(
-  async () => {
+  async (): Promise<Offering[]> => {
     const db = getPublicClient();
-    if (!db) return [] as { doctor_id: string; service_id: string; online_booking: boolean }[];
+    if (!db) return [];
     const { data, error } = await db.rpc("public_offerings");
     if (error) {
       console.error("offerings_fetch_error", { code: error.code });
-      return [];
+      throw new Error("offerings_unavailable");
     }
-    return (data ?? []) as { doctor_id: string; service_id: string; online_booking: boolean }[];
+    return (data ?? []) as Offering[];
   },
   ["public-offerings-v1"],
   { tags: [CONTENT_TAG], revalidate: 600 },
 );
 
-export async function getOfferings() {
-  return fetchOfferings();
+export async function getOfferings(): Promise<Offering[]> {
+  return fetchOfferings().catch(() => []);
 }
 
 export async function doctorsForService(serviceId: string) {
@@ -163,10 +167,11 @@ const fetchSettings = unstable_cache(
     const db = getPublicClient();
     if (!db) return EMPTY_SETTINGS;
     const { data, error } = await db.from("clinic_settings_public").select("*").maybeSingle();
-    if (error || !data) {
-      if (error) console.error("settings_fetch_error", { code: error.code });
-      return EMPTY_SETTINGS;
+    if (error) {
+      console.error("settings_fetch_error", { code: error.code });
+      throw new Error("settings_unavailable");
     }
+    if (!data) return EMPTY_SETTINGS;
     const parsed = publicSettingsSchema.safeParse(data);
     return parsed.success ? parsed.data : EMPTY_SETTINGS;
   },
@@ -175,14 +180,15 @@ const fetchSettings = unstable_cache(
 );
 
 export async function getSettings(): Promise<PublicSettings> {
-  return fetchSettings();
+  return fetchSettings().catch(() => EMPTY_SETTINGS);
 }
 
 const fetchRedirects = unstable_cache(
   async (): Promise<Record<string, string>> => {
     const db = getPublicClient();
     if (!db) return {};
-    const { data } = await db.from("redirects").select("from_path, to_path");
+    const { data, error } = await db.from("redirects").select("from_path, to_path");
+    if (error) throw new Error("redirects_unavailable");
     return Object.fromEntries((data ?? []).map((r) => [r.from_path as string, r.to_path as string]));
   },
   ["redirects-v1"],
@@ -190,7 +196,7 @@ const fetchRedirects = unstable_cache(
 );
 
 export async function findRedirect(path: string): Promise<string | null> {
-  return (await fetchRedirects())[path] ?? null;
+  return (await fetchRedirects().catch(() => ({}) as Record<string, string>))[path] ?? null;
 }
 
 /** Versión vigente de la política de privacidad publicada (se registra en cada consentimiento). */

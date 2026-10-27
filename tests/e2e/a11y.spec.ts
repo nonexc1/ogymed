@@ -55,3 +55,33 @@ test("panel accesible: login y agenda", async ({ page }) => {
     await expectNoViolations(page, path);
   }
 });
+
+/** Avanza con Tab hasta que el elemento indicado tenga el foco (máx. 60 pasos) y lo activa con Enter. */
+async function tabAndPress(page: Page, target: import("@playwright/test").Locator, key = "Enter") {
+  for (let i = 0; i < 60; i++) {
+    if (await target.evaluate((el) => el === document.activeElement)) {
+      await page.keyboard.press(key);
+      return;
+    }
+    await page.keyboard.press("Tab");
+  }
+  throw new Error("No se alcanzó el elemento con el teclado");
+}
+
+test("reserva operable sólo con teclado hasta los datos de contacto", async ({ page }) => {
+  await page.goto("/reservar");
+  await tabAndPress(page, page.getByRole("button", { name: /Consulta ginecológica/ }));
+  await expect(page.getByRole("heading", { name: "¿Con quién quieres atenderte?" })).toBeFocused();
+  await tabAndPress(page, page.getByRole("button", { name: /Primera disponibilidad/ }));
+  await expect(page.getByRole("heading", { name: "Elige fecha y hora" })).toBeFocused();
+  await tabAndPress(page, page.getByRole("button", { name: "Siguiente" }));
+  const firstTime = page.locator("fieldset").filter({ hasText: /Mañana|Tarde/ }).getByRole("button").first();
+  await firstTime.waitFor();
+  await tabAndPress(page, firstTime);
+  await expect(page.getByRole("heading", { name: "Tus datos de contacto" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByLabel("Nombre y apellido")).toBeFocused();
+  // El foco es visible (outline del sistema de diseño).
+  const outline = await page.getByLabel("Nombre y apellido").evaluate((el) => getComputedStyle(el).outlineStyle);
+  expect(outline).not.toBe("none");
+});

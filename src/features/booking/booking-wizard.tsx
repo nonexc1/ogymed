@@ -9,7 +9,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox, Field, Input } from "@/components/ui/field";
 import { Alert, Card } from "@/components/ui/surface";
 import { formatPhone, telUrl, whatsappUrl } from "@/lib/contact-links";
-import { formatLimaDate, formatLimaTime } from "@/lib/datetime";
+import { formatLimaDate, formatLimaTime, ucfirst } from "@/lib/datetime";
 import { cn } from "@/lib/utils";
 
 import { HoldTimer } from "./hold-timer";
@@ -332,7 +332,7 @@ export function BookingWizard(props: Props) {
             <p className="text-lg">
               {service?.name} con {doctorName(result.doctor_id)}
               <br />
-              <strong className="capitalize">{formatLimaDate(result.starts_at)}</strong>, a las{" "}
+              <strong>{ucfirst(formatLimaDate(result.starts_at))}</strong>, a las{" "}
               <strong>{formatLimaTime(result.starts_at)}</strong> (hora de Lima)
             </p>
             <p className="text-muted">
@@ -623,8 +623,8 @@ function ReviewStep({
           </div>
           <div>
             <dt className="text-sm text-muted">Fecha y hora (Lima)</dt>
-            <dd className="font-semibold capitalize">
-              {formatLimaDate(hold.starts_at)}, {formatLimaTime(hold.starts_at)}
+            <dd className="font-semibold">
+              {ucfirst(formatLimaDate(hold.starts_at))}, {formatLimaTime(hold.starts_at)}
             </dd>
           </div>
           <div>

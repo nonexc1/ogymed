@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Sin compilación JIT de validadores (usa `new Function`): compatible con la CSP sin 'unsafe-eval'.
+z.config({ jitless: true });
+
 /** Normaliza teléfonos peruanos a E.164 (+51…). Acepta 9 dígitos móviles o números ya en E.164. */
 export function normalizePhone(input: string): string | null {
   const raw = input.replace(/[\s().-]/g, "");

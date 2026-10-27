@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, Input } from "@/components/ui/field";
 import { Alert, Badge, Card } from "@/components/ui/surface";
-import { formatLimaDate, formatLimaTime } from "@/lib/datetime";
+import { formatLimaDate, formatLimaTime, ucfirst } from "@/lib/datetime";
 
 import { bookingMessage } from "./messages";
 import { SlotPicker } from "./slot-picker";
@@ -87,7 +87,7 @@ export function ManageAppointments({
         <Card key={a.appointment_id} className="space-y-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="font-display text-2xl capitalize text-plum-strong">{formatLimaDate(a.starts_at)}</p>
+              <p className="font-display text-2xl text-plum-strong">{ucfirst(formatLimaDate(a.starts_at))}</p>
               <p className="text-lg">
                 {formatLimaTime(a.starts_at)} (hora de Lima) · {a.serviceName} · {a.doctorName}
               </p>
