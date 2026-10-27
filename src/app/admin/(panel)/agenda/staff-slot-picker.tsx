@@ -43,7 +43,7 @@ export function StaffSlotPicker({
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className={cn("grid gap-4", services ? "sm:grid-cols-3" : "sm:grid-cols-2")}>
         {services ? (
           <Field id="sp-service" label="Servicio" required>
             {(a) => (

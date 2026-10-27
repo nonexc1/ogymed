@@ -76,6 +76,9 @@ auditoría, reportes y exportación CSV auditada, previsualización.
 * Avisos de una cita nueva detrás de una cola acumulada: se procesan primero los de esa cita.
 * Accesibilidad (axe): contraste, etiqueta en el nombre del logo, tablas desplazables enfocables.
 * Zod JIT bloqueado por la CSP: `jitless` en lugar de relajar la CSP.
+* Revisión visual con capturas (escritorio y móvil, build de producción): la tabla «Hoy» del inicio del
+  panel se recortaba entre 1280 y 1535 px (ahora las dos tarjetas se apilan hasta 1536 px) y el selector
+  de profesional al reprogramar truncaba el nombre (ahora ocupa media fila).
 
 ## Bloqueos concretos (necesito de OGYMED)
 

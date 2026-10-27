@@ -81,7 +81,7 @@ export default async function DashboardPage() {
         {stat("Avisos fallidos", failedRes.count, "/admin/agenda/avisos")}
         {stat("Solicitudes nuevas", requestsRes.count, "/admin/solicitudes")}
       </div>
-      <div className="mt-8 grid gap-6 xl:grid-cols-2">
+      <div className="mt-8 grid gap-6 2xl:grid-cols-2">
         <Panel title="Hoy">
           {todays.length ? (
             <Table>
