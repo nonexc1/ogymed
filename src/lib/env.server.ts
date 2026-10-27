@@ -15,8 +15,16 @@ const serverSchema = z.object({
   SITE_INDEXING: z.enum(["on", "off"]).default("off"),
 });
 
+// Fallbacks: nombres que crea la integración Supabase de Vercel (clave heredada, mismo rol service_role).
+const ALIASES: Partial<Record<keyof typeof serverSchema.shape, string>> = { SUPABASE_SECRET_KEY: "SUPABASE_SERVICE_ROLE_KEY" };
+
 const parsed = serverSchema.safeParse(
-  Object.fromEntries(Object.keys(serverSchema.shape).map((k) => [k, process.env[k] || undefined])),
+  Object.fromEntries(
+    Object.keys(serverSchema.shape).map((k) => {
+      const alias = ALIASES[k as keyof typeof serverSchema.shape];
+      return [k, process.env[k] || (alias ? process.env[alias] : undefined) || undefined];
+    }),
+  ),
 );
 
 if (!parsed.success) {

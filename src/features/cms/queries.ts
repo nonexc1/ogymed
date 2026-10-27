@@ -2,7 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 
-import { hideDemoContent } from "@/lib/env";
+import { hideDemoContent, publicEnv } from "@/lib/env";
 import { getPublicClient } from "@/lib/supabase/public";
 
 import {
@@ -24,6 +24,9 @@ import {
 export const CONTENT_TAG = "content";
 export const SETTINGS_TAG = "settings";
 const REVALIDATE_SECONDS = 3600;
+// El proyecto de Supabase forma parte de cada clave: Vercel reutiliza `.next/cache` entre despliegues y
+// no debe servirse contenido cacheado de otro proyecto (o de cuando no había base configurada).
+const SCOPE = publicEnv.NEXT_PUBLIC_SUPABASE_URL ?? "sin-supabase";
 
 type Row = {
   entity_id: string;
@@ -54,7 +57,7 @@ const fetchPublished = unstable_cache(
     return (data ?? []) as Row[];
   },
   // El filtro de demo forma parte de la clave: nunca reutilizar en producción una caché con datos demo.
-  ["published-content-v1", hideDemoContent ? "sin-demo" : "con-demo"],
+  ["published-content-v1", SCOPE, hideDemoContent ? "sin-demo" : "con-demo"],
   { tags: [CONTENT_TAG], revalidate: REVALIDATE_SECONDS },
 );
 
@@ -142,7 +145,7 @@ const fetchOfferings = unstable_cache(
     }
     return (data ?? []) as Offering[];
   },
-  ["public-offerings-v1"],
+  ["public-offerings-v1", SCOPE],
   { tags: [CONTENT_TAG], revalidate: 600 },
 );
 
@@ -175,7 +178,7 @@ const fetchSettings = unstable_cache(
     const parsed = publicSettingsSchema.safeParse(data);
     return parsed.success ? parsed.data : EMPTY_SETTINGS;
   },
-  ["public-settings-v1"],
+  ["public-settings-v1", SCOPE],
   { tags: [SETTINGS_TAG], revalidate: REVALIDATE_SECONDS },
 );
 
@@ -191,7 +194,7 @@ const fetchRedirects = unstable_cache(
     if (error) throw new Error("redirects_unavailable");
     return Object.fromEntries((data ?? []).map((r) => [r.from_path as string, r.to_path as string]));
   },
-  ["redirects-v1"],
+  ["redirects-v1", SCOPE],
   { tags: [CONTENT_TAG], revalidate: 300 },
 );
 

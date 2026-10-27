@@ -16,7 +16,7 @@ async function main() {
   const email = arg("email")?.trim().toLowerCase();
   const name = arg("name")?.trim();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SECRET_KEY;
+  const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
   if (!email || !name) throw new Error("Uso: pnpm bootstrap:admin --email correo --name \"Nombre\"");
   if (!url || !key) throw new Error("Faltan NEXT_PUBLIC_SUPABASE_URL o SUPABASE_SECRET_KEY");

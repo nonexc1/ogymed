@@ -108,3 +108,25 @@ variables por entorno (Production / Preview) apuntando a proyectos Supabase dist
 * Cabeceras: CSP, HSTS, `X-Frame-Options: DENY`.
 * Cron: en Vercel → Logs, ejecuciones 200 de `/api/cron/*`.
 * Reserva de prueba de punta a punta con correo de prueba; cancelarla después.
+
+## 8. Problema frecuente: «la web publicada se ve vacía»
+
+En el despliegue de **producción** de Vercel la web sólo muestra contenido **real y publicado**; nunca
+los datos de ejemplo. Si sólo aparecen la portada genérica, «Reserva en tres pasos», la ubicación y un
+menú con «Servicios · Contacto», es una de estas causas (en orden):
+
+1. **Sin base de datos conectada.** Faltan `NEXT_PUBLIC_SUPABASE_URL` y
+   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` en Vercel (Settings → Environment Variables). Se comprueba en
+   `/admin/login`: si falta la conexión, la página lo dice y nombra las variables (nunca sus valores).
+   Si Supabase se conectó desde el Marketplace de Vercel, sus nombres `NEXT_PUBLIC_SUPABASE_ANON_KEY` y
+   `SUPABASE_SERVICE_ROLE_KEY` también sirven. **Tras añadir o cambiar variables hay que volver a
+   desplegar** (Deployments → ⋯ → Redeploy): las páginas se generan en el build.
+2. **Base conectada pero sin esquema o sin contenido.** `supabase db push` aplica las migraciones pero
+   no el seed (a propósito). Hay que crear el primer administrador (§5.2) y cargar y publicar desde el
+   panel la configuración, los profesionales, los servicios y las páginas.
+3. **Base con el seed demo.** En producción los registros `is_demo` se ocultan siempre. Para ver la demo
+   en línea, usar un despliegue **Preview** (cualquier rama distinta de la de producción, con las
+   variables definidas para el entorno Preview) conectado a un proyecto Supabase de staging con el seed.
+
+Las claves de caché de contenido incluyen el proyecto de Supabase, así que cambiar de proyecto o
+conectar la base por primera vez no reutiliza contenido cacheado de un build anterior.

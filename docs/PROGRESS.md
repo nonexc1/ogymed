@@ -79,6 +79,13 @@ auditoría, reportes y exportación CSV auditada, previsualización.
 * Revisión visual con capturas (escritorio y móvil, build de producción): la tabla «Hoy» del inicio del
   panel se recortaba entre 1280 y 1535 px (ahora las dos tarjetas se apilan hasta 1536 px) y el selector
   de profesional al reprogramar truncaba el nombre (ahora ocupa media fila).
+* Primer despliegue en Vercel «vacío»: es el comportamiento de producción sin base conectada (y sin
+  contenido real; los datos demo nunca se muestran en producción). Reproducido localmente con
+  `VERCEL_ENV=production` y sin variables de Supabase. Mejoras: `/admin/login` avisa qué variables faltan;
+  se aceptan los nombres de la integración Supabase de Vercel (`NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+  `SUPABASE_SERVICE_ROLE_KEY`); y las claves de caché incluyen el proyecto de Supabase, porque la
+  reproducción mostró contenido de un build anterior servido desde `.next/cache` (Vercel la reutiliza
+  entre despliegues). Guía de diagnóstico en `DEPLOYMENT.md` §8.
 
 ## Bloqueos concretos (necesito de OGYMED)
 
