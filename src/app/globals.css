@@ -4,9 +4,13 @@
  * Identidad PROVISIONAL de OGYMED (sustituir cuando la clínica entregue logo/manual).
  * Contrastes verificados (WCAG 2.2): ink/ivory 14.6:1 · plum/ivory 11.5:1 · plum/rose 9.2:1 ·
  * sage-strong/ivory 6.0:1 · muted/ivory 6.8:1. sage (#697C73) = 4.2:1 → sólo decorativo o texto grande.
+ * La paleta ciruela/marfil se mantiene por decisión de OGYMED (el logo circular coral recibido queda
+ * pendiente de versión vectorial y de decidir su uso).
  */
 @theme {
   --color-ivory: #faf8f5;
+  /* Fondo cálido de bandas editoriales (ink 13.4:1 · muted 6.2:1 · plum 10.6:1 · sage-strong 5.6:1). */
+  --color-sand: #f4eeea;
   --color-paper: #ffffff;
   --color-plum: #51283f;
   --color-plum-strong: #3e2030;

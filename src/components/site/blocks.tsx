@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, CalendarCheck, Clock, MailCheck, MessageCircle, Phone, UserRound } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarCheck, MessageCircle, Phone, UserRound } from "lucide-react";
 
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { buttonVariants } from "@/components/ui/button";
@@ -85,12 +85,21 @@ export function DoctorChip({ doctor }: { doctor: Doctor }) {
   );
 }
 
-export function FaqList({ faqs }: { faqs: { id: string; question: string; answer_md: string }[] }) {
+export function FaqList({
+  faqs,
+  variant = "card",
+}: {
+  faqs: { id: string; question: string; answer_md: string }[];
+  variant?: "card" | "lines";
+}) {
+  const lines = variant === "lines";
   return (
-    <div className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-paper">
+    <div className={lines ? "divide-y divide-line border-y border-line" : "divide-y divide-line rounded-[var(--radius-card)] border border-line bg-paper"}>
       {faqs.map((f) => (
-        <details key={f.id} className="group p-5 [&_summary::-webkit-details-marker]:hidden">
-          <summary className="flex cursor-pointer list-none items-start justify-between gap-4 rounded-lg font-semibold text-ink">
+        <details key={f.id} className={`group [&_summary::-webkit-details-marker]:hidden ${lines ? "py-6" : "p-5"}`}>
+          <summary
+            className={`flex cursor-pointer list-none items-start justify-between gap-4 rounded-lg text-ink ${lines ? "font-display text-[1.3rem] leading-snug text-plum-strong" : "font-semibold"}`}
+          >
             <span>{f.question}</span>
             <span aria-hidden="true" className="text-plum transition-transform group-open:rotate-45">
               +
@@ -108,48 +117,6 @@ export function ServiceFaqs({ faqs }: { faqs: Service["faqs"] }) {
 }
 
 export type FaqItem = Faq;
-
-/** Explica el proceso real según el modo de reserva configurado; nunca promete confirmación automática si no la hay. */
-export function BookingSteps({ mode, hasWhatsapp }: { mode: PublicSettings["booking_mode"]; hasWhatsapp: boolean }) {
-  const steps =
-    mode === "off"
-      ? [
-          { Icon: CalendarCheck, title: "Envía tu solicitud", text: "Indica tu nombre, cómo contactarte y el motivo general (sin datos médicos)." },
-          { Icon: Phone, title: "Recepción te contacta", text: "Coordinamos contigo la fecha y la hora disponibles." },
-          { Icon: MailCheck, title: "Confirmación", text: "Tu cita queda registrada cuando recepción la confirma." },
-        ]
-      : [
-          { Icon: CalendarCheck, title: "Elige servicio y horario", text: "Ves la disponibilidad real de la agenda, en hora de Lima." },
-          { Icon: MailCheck, title: "Verifica tu correo", text: "Te enviamos un código para proteger tu reserva. No necesitas crear una cuenta." },
-          {
-            Icon: Clock,
-            title: mode === "automatic" ? "Cita confirmada" : "Recepción confirma",
-            text:
-              mode === "automatic"
-                ? "Recibes la confirmación y un enlace seguro para cambiar o cancelar."
-                : "Tu solicitud queda pendiente hasta que recepción la confirme por correo.",
-          },
-        ];
-  return (
-    <div>
-      <ol className="grid gap-6 md:grid-cols-3">
-        {steps.map(({ Icon, title, text }, i) => (
-          <li key={title} className="relative rounded-[var(--radius-card)] border border-line bg-paper p-6">
-            <span className="absolute right-5 top-4 font-display text-4xl text-rose" aria-hidden="true">
-              {i + 1}
-            </span>
-            <Icon aria-hidden="true" className="size-7 text-sage-strong" />
-            <h3 className="mt-3 font-sans text-lg font-semibold text-ink">{title}</h3>
-            <p className="mt-1 text-muted">{text}</p>
-          </li>
-        ))}
-      </ol>
-      {hasWhatsapp ? (
-        <p className="mt-4 text-muted">¿Prefieres hablar con alguien? También puedes coordinar por WhatsApp o por teléfono con recepción.</p>
-      ) : null}
-    </div>
-  );
-}
 
 export function ContactActions({
   settings,

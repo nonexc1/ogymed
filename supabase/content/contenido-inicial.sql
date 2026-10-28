@@ -9,7 +9,7 @@
 --
 -- QUÉ CARGA Y EN QUÉ ESTADO (respeta el flujo editorial del encargo)
 --   * PUBLICADO: portada, la clínica, servicios (índice), equipo (índice), blog (índice), preguntas
---     frecuentes, contacto y 9 preguntas frecuentes operativas. No contienen datos clínicos ni datos de
+--     frecuentes, contacto y 10 preguntas frecuentes operativas. No contienen datos clínicos ni datos de
 --     OGYMED que no estén confirmados.
 --   * EN REVISIÓN MÉDICA (no visibles hasta que un revisor médico habilitado los apruebe en el panel):
 --     6 servicios, «Tu primera visita» y 6 artículos del blog. Son borradores asistidos por IA: el
@@ -35,22 +35,14 @@ values
 -- Portada ---------------------------------------------------------------------------------------------
 ('home',
  'Clínica ginecológica en Santiago de Surco',
- 'Un espacio dedicado a tu salud ginecológica en Surco, Lima. Pide tu cita en línea en pocos pasos, sin crear una cuenta.',
+ 'Conoce nuestros servicios y coordina tu próxima visita.',
  '',
  jsonb_build_object(
-   'hero_kicker', 'Clínica ginecológica · Santiago de Surco',
-   'hero_title', 'Atención ginecológica en Santiago de Surco',
-   'hero_text', 'Un espacio dedicado a tu salud ginecológica en Surco, Lima. Pide tu cita en línea en pocos pasos, sin crear una cuenta.',
-   'highlights', jsonb_build_array(
-     jsonb_build_object('title', 'Sin crear una cuenta',
-       'text', 'Para pedir tu cita solo necesitas tu nombre y un medio de contacto. No tienes que registrarte ni recordar contraseñas.'),
-     jsonb_build_object('title', 'Solo lo necesario',
-       'text', 'Por la web no te pedimos síntomas, diagnósticos ni documentos. Esa información se conversa en la consulta.'),
-     jsonb_build_object('title', 'Información revisada',
-       'text', 'Los contenidos de salud de esta web se publican solo después de la revisión de un profesional de nuestro equipo.')
-   )),
+   'hero_kicker', 'Ginecología en Surco, Lima',
+   'hero_title', 'Tu salud merece tiempo y atención.',
+   'hero_text', 'Conoce nuestros servicios y coordina tu próxima visita.'),
  'OGYMED · Clínica ginecológica en Santiago de Surco, Lima',
- 'Clínica ginecológica en Santiago de Surco, Lima. Conoce nuestros servicios y pide tu cita en línea, sin crear una cuenta.',
+ 'Clínica ginecológica en Santiago de Surco, Lima. Conoce nuestros servicios y coordina tu próxima visita.',
  false, null, 'published', null),
 
 -- La clínica ------------------------------------------------------------------------------------------
@@ -572,6 +564,9 @@ from (values
   ('¿Qué debo llevar a mi primera consulta?',
    'Te recomendamos llevar la lista de medicamentos que tomas y tus resultados anteriores si los tienes, y anotar la fecha de tu última menstruación y tus preguntas.',
    'visita', 80),
+  ('¿Quién revisa la información de salud de esta web?',
+   'Los contenidos de salud (servicios, artículos y la guía de primera visita) se publican solo después de la revisión de un profesional de nuestro equipo. En cada página verás la fecha de esa revisión.',
+   'general', 95),
   ('¿Pueden darme indicaciones médicas por la web?',
    'No damos diagnósticos ni indicaciones personalizadas por la web. Si tienes una duda sobre tu salud, pide una cita. Ante una emergencia, acude al servicio de emergencias más cercano o llama al SAMU (106).',
    'general', 90)
@@ -886,7 +881,7 @@ select private.audit('content.initial_load', 'content', null,
 commit;
 
 -- Resumen (debería mostrar: 7 páginas publicadas, 1 en revisión médica, 5 borradores legales,
--- 6 servicios y 6 artículos en revisión médica y 9 preguntas publicadas, más lo que ya existiera).
+-- 6 servicios y 6 artículos en revisión médica y 10 preguntas publicadas, más lo que ya existiera).
 select 'páginas' as tipo, status::text as estado, count(*) from public.pages group by status
 union all select 'servicios', status::text, count(*) from public.services group by status
 union all select 'artículos', status::text, count(*) from public.posts group by status

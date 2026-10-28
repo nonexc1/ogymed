@@ -88,6 +88,15 @@ Estados: **Borrador → En revisión médica → Publicado → Archivado**.
   publicado. Sólo hace falta tras cargar contenido directamente en la base (p. ej. el contenido inicial);
   publicar desde el panel ya actualiza la web.
 
+### Fotografías e «Imagen principal»
+
+Cada página tiene **Imagen principal** (Contenido → página). Además de usarse al compartir en redes, se
+muestra en el diseño: Portada → hero; Servicios (índice) → sección de servicios de la portada; La
+clínica → cabecera y banda de la portada; Primera visita → «Tu cita, paso a paso»; Contacto → bloque de
+ubicación si no hay mapa. Subir antes la foto en **Medios** (derechos y texto alternativo). Lista de fotos
+y formatos: `docs/ASSETS.md`. **Vista de demostración** (botón en Contenido): composición completa con
+datos ficticios y huecos rotulados; no publica nada.
+
 ### Contenido inicial (una sola vez, al lanzar)
 
 `supabase/content/contenido-inicial.sql` carga textos reales sin datos inventados. Pegarlo en Supabase →

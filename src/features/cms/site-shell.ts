@@ -2,7 +2,8 @@ import "server-only";
 
 import type { NavItem } from "@/components/site/header";
 
-import { getPage, getSettings, listDoctors, listPosts, listServices } from "./queries";
+import { getPage, listDoctors, listPosts, listServices } from "./queries";
+import { getRequestState } from "./request-state";
 
 const LEGAL_PAGES = [
   { kind: "privacy", href: "/privacidad", label: "Privacidad" },
@@ -13,8 +14,8 @@ const LEGAL_PAGES = [
 
 /** Datos compartidos por cabecera, footer y barra móvil. Sólo enlaza secciones con contenido publicado. */
 export async function getSiteShell() {
-  const [settings, services, doctors, posts, clinic, faq, firstVisit, ...legal] = await Promise.all([
-    getSettings(),
+  const [{ settings, label, kind }, services, doctors, posts, clinic, faq, firstVisit, ...legal] = await Promise.all([
+    getRequestState(),
     listServices(),
     listDoctors(),
     listPosts(),
@@ -26,7 +27,7 @@ export async function getSiteShell() {
 
   const nav: NavItem[] = [];
   if (services.length) nav.push({ href: "/servicios", label: "Servicios" });
-  if (doctors.length) nav.push({ href: "/equipo", label: "Equipo" });
+  if (doctors.length) nav.push({ href: "/equipo", label: "Equipo médico" });
   if (clinic) nav.push({ href: "/la-clinica", label: "La clínica" });
   if (firstVisit) nav.push({ href: "/primera-visita", label: "Primera visita" });
   if (posts.length) nav.push({ href: "/blog", label: "Blog" });
@@ -49,6 +50,7 @@ export async function getSiteShell() {
     nav,
     legalLinks,
     missing,
-    bookingLabel: settings.booking_mode === "off" ? "Solicitar cita" : "Reservar cita",
+    bookingLabel: label,
+    requestKind: kind,
   };
 }

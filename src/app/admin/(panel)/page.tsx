@@ -52,6 +52,8 @@ export default async function DashboardPage() {
   if (emailTransport === "disabled") warnings.push("El correo transaccional no está configurado: los avisos quedarán como fallidos.");
   if (emailTransport === "dev-file") warnings.push("Correo en modo desarrollo: los mensajes se guardan en .dev-mail/ y no se envían.");
   if (!privacy) warnings.push("La política de privacidad no está publicada: formularios y reservas quedan deshabilitados.");
+  if (!privacy && !settings.whatsapp_e164 && !settings.phone_e164 && !settings.public_email)
+    warnings.push("Ahora mismo nadie puede pedir una cita: publica la política de privacidad o configura WhatsApp, teléfono o correo en Configuración.");
   if (staff.roles.includes("admin") && !privateRes.data?.reception_notification_email) warnings.push("No hay correo de recepción para avisos internos.");
   if (deployEnv !== "production") warnings.push(`Entorno: ${deployEnv}. No usar datos reales de pacientes.`);
 

@@ -29,7 +29,12 @@ export default async function ContentIndexPage() {
         description="Páginas, preguntas frecuentes y blog. Todo se edita como borrador y se publica explícitamente."
         actions={
           canEdit ? (
-            <ActionForm action={refreshPublicSite} submitLabel="Actualizar la web ahora" submitVariant="secondary" inline />
+            <>
+              <Link href="/admin/demo" className="inline-flex min-h-11 items-center rounded-lg px-4 font-semibold text-plum underline underline-offset-4">
+                Vista de demostración
+              </Link>
+              <ActionForm action={refreshPublicSite} submitLabel="Actualizar la web ahora" submitVariant="secondary" inline />
+            </>
           ) : null
         }
       />

@@ -40,7 +40,7 @@ export function ContactForm({ defaultTopic = "informacion" }: { defaultTopic?: "
   if (status === "sent") {
     return (
       <Alert tone="success" role="status" title="Mensaje recibido">
-        Recepción te contactará por el medio que indicaste. Si tu consulta es urgente, llama o escríbenos por WhatsApp.
+        Recepción te contactará por el medio que indicaste. Si se trata de una emergencia, acude al servicio de emergencias más cercano o llama al SAMU (106).
       </Alert>
     );
   }
@@ -52,7 +52,7 @@ export function ContactForm({ defaultTopic = "informacion" }: { defaultTopic?: "
       </p>
       {status === "error" ? (
         <Alert tone="danger" role="alert" title="No pudimos enviar tu mensaje">
-          Inténtalo nuevamente en unos minutos o contáctanos por teléfono.
+          Inténtalo nuevamente en unos minutos.
         </Alert>
       ) : null}
       {status === "limited" ? (

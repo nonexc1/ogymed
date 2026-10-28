@@ -88,6 +88,8 @@ variables por entorno (Production / Preview) apuntando a proyectos Supabase dist
    inicial: Supabase → SQL Editor → pegar `supabase/content/contenido-inicial.sql` → Run; en el panel,
    Contenido → «Actualizar la web ahora». Detalle de estados en `ADMIN_GUIDE.md` §5.
    Cargar configuración pública (NAP, horarios), completar los textos legales validados y publicarlos.
+   Si el contenido inicial se cargó antes del 2026-10-28, ejecutar también
+   `supabase/content/2026-10-28-portada-v2.sql` (textos de la nueva portada; respeta ediciones del panel).
 4. Cargar profesionales (CMP/RNE verificados), servicios aprobados y revisados, horarios y feriados.
 5. Correo de recepción para avisos internos. Probar un envío real.
 6. Ensayo completo con datos sintéticos en staging; luego activar `reception` o `automatic`.

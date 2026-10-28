@@ -92,6 +92,17 @@ en desarrollo. Obstetricia, fertilidad o ginecología regenerativa no se crean s
 | Google Business Profile verificado | ⚠️ | SEO local |
 | Correo del primer administrador | ⛔ | `pnpm bootstrap:admin` |
 
+## Identidad y fotografías
+
+Detalle por espacio, formatos y enlaces a las fotos generadas: `docs/ASSETS.md`.
+
+| Dato | Estado |
+|---|---|
+| Logo en vector (se recibió JPG circular coral) y decisión de uso con la paleta ciruela | ⛔ |
+| Fotos reales de instalaciones (La clínica) y fachada/acceso (Ubicación) | ⛔ |
+| Retratos autorizados de profesionales | ⛔ |
+| 4 fotos conceptuales generadas con IA: revisar y subir en Medios | 🟡 |
+
 ## Contenido editorial
 
 | Dato | Estado |

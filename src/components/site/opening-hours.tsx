@@ -24,6 +24,13 @@ export function OpeningHours({ settings }: { settings: PublicSettings }) {
   );
 }
 
+/** Resumen de una línea (banda de datos): primer tramo o, si hay varios, una invitación a ver el horario. */
+export function compactHours(settings: PublicSettings): string | null {
+  const [first, ...rest] = settings.opening_hours;
+  if (!first) return null;
+  return rest.length ? "Horario de atención" : `${ucfirst(daysLabel(first.days))} · ${first.opens}–${first.closes}`;
+}
+
 export function addressText(s: PublicSettings): string | null {
   if (!s.address_line) return null;
   return [s.address_line, s.district, s.city].filter(Boolean).join(", ");

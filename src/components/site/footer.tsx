@@ -23,7 +23,7 @@ export function Footer({ settings, legal }: { settings: PublicSettings; legal: {
     <footer className="mt-24 border-t border-line bg-paper pb-24 sm:pb-0">
       <Container className="grid gap-10 py-14 md:grid-cols-4">
         <div className="space-y-3 md:col-span-1">
-          <Logo name={settings.clinic_name} />
+          <Logo name={settings.clinic_name} descriptor />
           <p className="text-muted">Clínica ginecológica en Santiago de Surco, Lima.</p>
         </div>
         <div>

@@ -103,6 +103,32 @@ veces sin duplicar, respeta páginas ya escritas y reemplaza borradores vacíos;
 de prueba y bloqueo de «Primera visita» por `[COMPLETAR]` con mensaje claro. `pnpm test:db` (41, nueva
 prueba del bloqueo), `pnpm test`, lint, typecheck y 16 e2e en verde.
 
+## Rediseño visual de la web pública (2026-10-28)
+
+Sobre la base marfil/ciruela y serif + sans: cabecera con marca «OGYMED», navegación sólo hacia secciones
+publicadas (marca la actual) y una sola acción cuyo texto sale del **estado real** (`getRequestState`:
+«Reservar» sólo con agenda en línea y confirmación automática; si no, «Solicitar»). Portada nueva con
+hero en dos columnas («Tu salud merece tiempo y atención.»; en móvil texto y botón antes de la foto),
+banda de datos reales (ubicación, vía de cita, horario, WhatsApp; se oculta con menos de dos), servicios
+en filas editoriales junto a una foto vertical, fichas de profesionales, banda «La clínica» (foto amplia o
+banda ciruela), «Tu cita, paso a paso» según el estado real, preguntas en dos columnas y ubicación con
+datos reales. Se retiraron las tarjetas «Sin crear una cuenta / Solo lo necesario / Información revisada»:
+su información está ahora en /reservar («Qué te pedimos»), en los pasos y en una pregunta frecuente
+nueva. «La clínica» con estructura editorial (cabecera con foto, declaración destacada, pilares
+numerados, ubicación, cierre con acción). /reservar y /contacto sólo ofrecen canales configurados; sin
+ninguno, lo dicen sin recomendar canales inexistentes.
+
+Fotos: campo «Imagen principal» por página (Medios); sin foto, cada sección usa su variante sin foto.
+Cuatro fotos conceptuales generadas con IA en la cuenta Fish Audio de OGYMED (no descargables desde la
+sesión): enlaces y destino en `docs/ASSETS.md`. Vista de demostración privada `/admin/demo` (y
+`?vista=la-clinica`) con datos ficticios y huecos rotulados. Script `supabase/content/2026-10-28-portada-v2.sql`
+para actualizar los textos de la portada en producción (probado sobre una base con la carga anterior:
+idempotente, respeta ediciones del panel).
+
+Verificado con capturas a 1440 y 390 px (build `VERCEL_ENV=production`): portada real, La clínica,
+Contacto, /reservar y la vista de demostración. `pnpm lint`, `pnpm typecheck`, 21 unitarias, 41 SQL y 16
+e2e (incl. axe en escritorio y móvil) en verde.
+
 ## Bloqueos concretos (necesito de OGYMED)
 
 1. Datos de `DATOS_PENDIENTES.md`: razón social/RUC, dirección y coordenadas, teléfono y WhatsApp,

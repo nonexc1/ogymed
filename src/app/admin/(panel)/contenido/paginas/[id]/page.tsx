@@ -16,6 +16,15 @@ import { PAGE_KINDS } from "../../page-kinds";
 
 export const metadata: Metadata = { title: "Página" };
 
+/** Dónde aparece la «Imagen principal» de cada página (además de al compartirla en redes). */
+const IMAGE_USE: Record<string, string> = {
+  home: "Fotografía del hero de la portada (horizontal 4:3; en móvil se recorta casi cuadrada).",
+  services_index: "Fotografía de la sección «Servicios» de la portada (vertical 4:5).",
+  clinic: "Cabecera de «La clínica» y banda «La clínica» de la portada (horizontal amplia).",
+  first_visit: "Sección «Tu cita, paso a paso» de la portada (vertical 4:5).",
+  contact: "Bloque de ubicación cuando no hay mapa (fachada o acceso de la sede, 4:3).",
+};
+
 export default async function PageEditPage({ params }: PageProps<"/admin/contenido/paginas/[id]">) {
   const { id } = await params;
   const { supabase, staff } = await requireStaff(["admin", "editor", "professional"]);
@@ -49,19 +58,24 @@ export default async function PageEditPage({ params }: PageProps<"/admin/conteni
                 <Field id="hero_kicker" label="Antetítulo">{(a) => <Input {...a} name="hero_kicker" maxLength={80} defaultValue={sections.hero_kicker ?? ""} />}</Field>
                 <Field id="hero_title" label="Título principal">{(a) => <Input {...a} name="hero_title" maxLength={140} defaultValue={sections.hero_title ?? ""} />}</Field>
                 <Field id="hero_text" label="Texto principal">{(a) => <Textarea {...a} name="hero_text" rows={3} maxLength={400} defaultValue={sections.hero_text ?? ""} />}</Field>
-                <Field id="highlights" label="Destacados (máx. 4)" description="Uno por línea: Título | Texto. Sólo afirmaciones verificables.">
-                  {(a) => <Textarea {...a} name="highlights" rows={4} defaultValue={(sections.highlights ?? []).map((h) => `${h.title} | ${h.text}`).join("\n")} />}
-                </Field>
-                <Field id="facilities_text" label="Texto de instalaciones">{(a) => <Textarea {...a} name="facilities_text" rows={3} maxLength={800} defaultValue={sections.facilities_text ?? ""} />}</Field>
               </fieldset>
             ) : null}
+            <MediaSelect
+              id="og_media_id"
+              name="og_media_id"
+              label="Imagen principal"
+              value={p.og_media_id}
+              media={media}
+            />
+            <p className="-mt-2 text-sm text-muted">
+              {IMAGE_USE[p.kind] ?? "Se usa al compartir la página en redes."} Sube fotos reales o con licencia en «Medios» (derechos y texto alternativo obligatorios).
+            </p>
             <Field id="body_md" label="Cuerpo (Markdown)" description="Encabezados con ##. No se permiten scripts ni HTML arbitrario.">{(a) => <Textarea {...a} name="body_md" rows={14} defaultValue={p.body_md} />}</Field>
             {meta?.legal ? <Field id="document_version" label="Versión del documento" description="Ej. 2026-11-v1">{(a) => <Input {...a} name="document_version" maxLength={40} defaultValue={p.document_version ?? ""} />}</Field> : null}
             <fieldset className="space-y-4 rounded-2xl border border-line p-4">
               <legend className="px-1 font-semibold">SEO</legend>
               <Field id="seo_title" label="Título SEO (≤ 70)">{(a) => <Input {...a} name="seo_title" maxLength={70} defaultValue={p.seo_title ?? ""} />}</Field>
               <Field id="seo_description" label="Descripción SEO (≤ 170)">{(a) => <Textarea {...a} name="seo_description" maxLength={170} rows={2} defaultValue={p.seo_description ?? ""} />}</Field>
-              <MediaSelect id="og_media_id" name="og_media_id" label={p.kind === "home" ? "Imagen principal y OG" : "Imagen para redes (OG)"} value={p.og_media_id} media={media} />
             </fieldset>
           </ActionForm>
         </Panel>
